@@ -1,0 +1,8 @@
+module Banque {
+interface Compte {
+void retirer( in float mt );
+void verser( in float mt );
+float getSolde( );
+long getCode();
+};
+};

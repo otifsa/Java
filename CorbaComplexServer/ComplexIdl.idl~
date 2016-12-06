@@ -1,0 +1,11 @@
+module {
+ struct Complex {
+	double re;
+	double im;		
+		};
+ interface ComplexInt{
+   Complex AddComplex(in Complex a,in Complex b);
+};
+
+
+};
