@@ -15,7 +15,7 @@ public class TransactionClient
 
        try{ orb = ORB.init(args, props);
 	    org.omg.CORBA.Object objRef = 
-        orb.resolve_initial_references("NameService");
+            orb.resolve_initial_references("NameService");
 	    NamingContextExt ncRef = NamingContextExtHelper.narrow(objRef);
 
 	    String name = "TRANSACTION";
@@ -44,3 +44,4 @@ public class TransactionClient
        catch(Exception e)
        {System.out.println(e);   }   }
 }
+

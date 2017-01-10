@@ -31,8 +31,22 @@
 	--add mysql driver to $CLASSPATH
 	##sudo apt-get install libmysql-java
 	##export CLASSPATH=$CLASSPATH:/usr/share/java/mysql-connector-java.jar
-3-
 
+3-installation et configuration mico 2.3.13
+ 	--download mico 2.3.13 
+	-- mkdir micosrc 
+ 	-- extarct file :tar -xvf mico-2.3.13.tar.gz
+	-- edit file fast_array.cc :gedit orb/fast_array.cc add "#include<limits.h>"
+	-- ./configure --prefix=$HOME/mico
+	-- time make -j5 >make.log 2>make.err
+	-- time make install >inst.log 2>inst.err
+	-- export PATH=$PATH:$HOME/mico/bin
+	-- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/mico/lib
+	-- export LIBRARY_PATH=$LIBRARY_PATH:$HOME/mico/lib
+	-- export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$HOME/mico/include
 
-
-
+4- creation et compilation de client
+	-- compile client: mico-c++ -I. -c TransactionClient.cpp -o TransactionClient.o
+	-- exeute: mico-c++ -I. -c bank.cc -o Transaction.o
+	-- mico-ld -o client TransactionClient.o Transaction.o -lmico2.3.13 -lmicocoss2.3.13
+	-- ./client -ORBInitRef NameService=corbaloc::127.0.0.1:1050/NameService

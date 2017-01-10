@@ -1,0 +1,5 @@
+module Bank
+{
+    interface Transaction
+    { string updateDetails(in  string counterId,in string date,in double amountDebit,in double amountCredit,in string accountId);  };
+};

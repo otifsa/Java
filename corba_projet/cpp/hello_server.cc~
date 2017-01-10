@@ -1,0 +1,112 @@
+#include <CORBA.h>
+#include <coss/CosNaming.h>
+#include "hello.h"
+
+/*
+ * Implementation of the Hello
+ */
+
+class Hello_impl : virtual public POA_Hello
+{
+  public:
+    char * sayHello ();
+};
+
+char *
+Hello_impl::sayHello ()
+{
+  return "Hello World!";
+}
+
+/*
+ * Main
+ */
+
+int
+main (int argc, char *argv[])
+{
+  /*
+   * Initialize ORB, get the Root POA, and register Hello object as usual
+   */
+
+  CORBA::ORB_var orb = CORBA::ORB_init (argc, argv);
+  
+  /*
+   * Obtain a reference to the RootPOA and its Manager
+   */
+
+  CORBA::Object_var poaobj = orb->resolve_initial_references ("RootPOA");
+  PortableServer::POA_var poa = PortableServer::POA::_narrow (poaobj);
+  PortableServer::POAManager_var mgr = poa->the_POAManager();
+
+  /*
+   * Create a Hello
+   */
+
+  Hello_impl * hello = new Hello_impl;
+
+  /*
+   * Activate the Hello
+   */
+
+  PortableServer::ObjectId_var oid = poa->activate_object (hello);
+  CORBA::Object_var ref = poa->id_to_reference (oid.in());
+
+  /*
+   * In demo/poa/hello-1, this object reference (ref) is written to a
+   * file. Here, we store the reference in the Naming Service
+   */
+  
+  /*
+   * Acquire a reference to the Naming Service
+   */
+
+  CORBA::Object_var nsobj =
+    orb->resolve_initial_references ("NameService");
+
+  CosNaming::NamingContext_var nc = 
+    CosNaming::NamingContext::_narrow (nsobj);
+
+  if (CORBA::is_nil (nc)) {
+    cerr << "oops, I cannot access the Naming Service!" << endl;
+    exit (1);
+  }
+
+  /*
+   * Construct Naming Service name for our Hello
+   */
+
+  CosNaming::Name name;
+  name.length (1);
+  name[0].id = CORBA::string_dup ("Hello");
+  name[0].kind = CORBA::string_dup ("");
+  
+  /*
+   * Store a reference to our Hello in the Naming Service. We use 'rebind'
+   * here instead of 'bind', because rebind does not complain if the desired
+   * name "Hello" is already registered, but silently overwrites it (the
+   * existing reference is probably from an old incarnation of this server).
+   */
+
+  cout << "Binding Hello in the Naming Service ... " << flush;
+  nc->rebind (name, ref);
+  cout << "done." << endl;
+
+  /*
+   * Activate the POA and start serving requests
+   */
+
+  printf ("Running.\n");
+
+  mgr->activate ();
+  orb->run();
+
+  /*
+   * Shutdown (never reached)
+   */
+
+  poa->destroy (TRUE, TRUE);
+  delete hello;
+
+  return 0;
+}
