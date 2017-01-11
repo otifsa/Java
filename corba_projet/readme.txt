@@ -2,6 +2,8 @@
 1- creation java server
 	--pour lance annuaire 
 	tnameserv -ORBInitialPort 1050
+        start orbd -ORBInitialPort 1050
+
 	--lance server 
 	java java TransactionServer -ORBInitialPort 1050
 	--lance client on local host 
